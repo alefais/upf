@@ -15,16 +15,17 @@ metrics_port=8080
 # "af_packet" uses AF_PACKET sockets via DPDK's vdev for pkt I/O.
 # "sim" uses Source() modules to simulate traffic generation
 # "cndp" uses kernel AF-XDP. It supports ZC and XDP offload if driver and NIC supports it. It's tested on Intel 800 series n/w adapter.
-mode="dpdk"
+#mode="dpdk"
 #mode="cndp"
 #mode="af_xdp"
 #mode="af_packet"
 #mode="sim"
+mode="af_xdp"
 
 # Gateway interface(s)
 #
 # In the order of ("s1u/n3" "sgi/n6")
-ifaces=("ens803f2" "ens803f3")
+ifaces=("ix0" "ix1")
 
 # Static IP addresses of gateway interface(s) in cidr format
 #
@@ -34,7 +35,7 @@ ipaddrs=(198.18.0.1/30 198.19.0.1/30)
 # MAC addresses of gateway interface(s)
 #
 # In the order of (s1u/n3 sgi/n6)
-macaddrs=(9e:b2:d3:34:ab:27 c2:9c:55:d4:8a:f6)
+macaddrs=(90:e2:ba:04:f2:54 90:e2:ba:04:f2:55)
 
 # Static IP addresses of the neighbors of gateway interface(s)
 #
