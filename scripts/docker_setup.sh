@@ -45,7 +45,7 @@ nhipaddrs=(198.18.0.2 198.19.0.2)
 # Static MAC addresses of the neighbors of gateway interface(s)
 #
 # In the order of (n-s1u/n3 n-sgi/n6)
-nhmacaddrs=(22:53:7a:15:58:50 22:53:7a:15:58:50)
+nhmacaddrs=(90:e2:ba:04:f2:54 90:e2:ba:04:f2:54)
 
 # IPv4 route table entries in cidr format per port
 #
@@ -167,7 +167,7 @@ sudo rm -rf /var/run/netns/pause
 make docker-build
 
 if [ "$mode" == 'dpdk' ]; then
-	DEVICES=${DEVICES:-'--device=/dev/vfio/48 --device=/dev/vfio/49 --device=/dev/vfio/vfio'}
+	DEVICES=${DEVICES:-'--device=/dev/vfio/40 --device=/dev/vfio/41 --device=/dev/vfio/vfio'}
 	PRIVS='--cap-add IPC_LOCK'
 
 elif [[ "$mode" == 'af_xdp' || "$mode" == 'cndp' ]]; then
@@ -218,13 +218,16 @@ if [ "$mode" == 'cndp' ]; then
 fi
 
 # Run bessd
-docker run --name bess -td --restart unless-stopped \
+# pktgen requires extra	--cap-add IPC_LOCK and --device=/dev/vfio/vfio --device=/dev/vfio/40
+docker run --privileged --name bess -td --restart unless-stopped \
 	--cpuset-cpus=12-13 \
-	--ulimit memlock=-1 -v /dev/hugepages:/dev/hugepages \
+	--ulimit memlock=-1 --cap-add IPC_LOCK \
+	-v /dev/hugepages:/dev/hugepages \
 	-v "$PWD/conf":/opt/bess/bessctl/conf \
 	--net container:pause \
 	$PRIVS \
 	$DEVICES \
+	--device=/dev/vfio/vfio --device=/dev/vfio/40 \
 	upf-epc-bess:"$(<VERSION)" -grpc-url=0.0.0.0:$bessd_port $HUGEPAGES
 
 docker logs bess
